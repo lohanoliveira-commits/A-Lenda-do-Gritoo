@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A Lenda do Grito — jogo de terror feito em HTML, CSS e JavaScript.">
+  <title>A Lenda do Grito</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <span class="eyebrow">JOGO DE TERROR • PROJETO ESCOLAR</span>
+      <h1>A Lenda do <em>Grito</em></h1>
+      <p class="tagline">A floresta guarda segredos. Encontre a chave. Saia antes que ele encontre você.</p>
+    </header>
+
+    <section class="game-layout" aria-label="Jogo">
+      <div class="game-frame">
+        <canvas id="game" width="900" height="540" aria-label="Área de jogo"></canvas>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card">
+            <p class="eyebrow">VOCÊ OUVIU ISSO?</p>
+            <h2 id="overlay-title">Não olhe para trás.</h2>
+            <p id="overlay-text">Explore o terreno, encontre a chave dourada e chegue à saída. Evite a presença que ronda a casa.</p>
+            <button id="start-btn" class="primary-btn">Começar jogo</button>
+          </div>
+        </div>
+      </div>
+      <aside class="hud">
+        <div class="hud-card"><span class="hud-label">OBJETIVO</span><strong id="objective">Encontre a chave</strong></div>
+        <div class="hud-card"><span class="hud-label">VIDA</span><strong id="health">♥ ♥ ♥</strong></div>
+        <div class="hud-card"><span class="hud-label">CHAVE</span><strong id="key-status">Não encontrada</strong></div>
+        <div class="hud-card"><span class="hud-label">TEMPO</span><strong id="timer">00:00</strong></div>
+        <div class="controls">
+          <h3>Controles</h3>
+          <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> ou setas — mover</p>
+          <p><kbd>E</kbd> — pegar a chave / interagir</p>
+          <p><kbd>F</kbd> — ligar/desligar lanterna</p>
+          <p><kbd>ESC</kbd> — pausar</p>
+        </div>
+        <button id="restart-btn" class="secondary-btn">Reiniciar partida</button>
+      </aside>
+    </section>
+    <footer><span>HTML • CSS • JavaScript</span><span>Projeto educacional — A Lenda do Grito</span></footer>
+  </main>
+  <script src="js/game.js"></script>
+</body>
+</html>
