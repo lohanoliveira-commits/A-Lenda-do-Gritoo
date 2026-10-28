@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090b0e">
+  <meta name="description" content="A Lenda do Grito — jogo indie de terror e sobrevivência em uma escola abandonada.">
+  <title>A Lenda do Grito — Escola do Terror</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+  </script>
+</head>
+<body>
+<main class="app">
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">ARQUIVO 07 · OCORRÊNCIA NÃO RESOLVIDA</p>
+      <h1>A LENDA DO <span>GRITO</span></h1>
+      <p class="subtitle">Toda escola guarda segredos. Esta aprendeu a gritar.</p>
+    </div>
+    <div class="case-stamp"><span>CASO</span><strong>013</strong><small>CONFIDENCIAL</small></div>
+  </header>
+
+  <section class="game-layout">
+    <div class="game-frame">
+      <canvas id="game-canvas" aria-label="Janela do jogo 3D"></canvas>
+      <div class="vignette"></div>
+      <div class="scanlines"></div>
+      <div class="hud-top"><span class="live-dot"></span><span id="status">SINAL INSTÁVEL</span><span class="hud-spacer"></span><span id="clock">00:00</span></div>
+      <div class="crosshair">+</div>
+      <div id="interaction" class="interaction">[E] INTERAGIR</div>
+      <div id="toast" class="toast" role="status"></div>
+      <div id="loading" class="loading"><div class="loader"></div><strong>Preparando a ocorrência...</strong><span>Gerando o cenário 3D</span></div>
+
+      <div id="start-screen" class="screen">
+        <div class="screen-card">
+          <p class="eyebrow">RELATÓRIO DE DESAPARECIMENTO</p>
+          <h2 id="screen-title">Ninguém deveria ter voltado.</h2>
+          <p id="screen-copy">A escola foi fechada depois de um grito ouvido em todas as salas ao mesmo tempo. Você entrou para descobrir o que aconteceu. Agora, a saída está trancada.</p>
+          <div class="briefing">
+            <span><b>OBJETIVO</b> Encontrar a chave e escapar</span>
+            <span><b>AMEAÇA</b> A entidade reage ao som</span>
+          </div>
+          <button id="start-button" class="button primary">Entrar na escola <span>↗</span></button>
+          <p class="small-note">WASD mover · Mouse olhar · Shift correr · E interagir · F lanterna · ESC pausar</p>
+        </div>
+      </div>
+      <div id="end-screen" class="screen hidden">
+        <div class="screen-card end-card">
+          <p class="eyebrow" id="end-kicker">REGISTRO ENCERRADO</p>
+          <h2 id="end-title">Você conseguiu sair?</h2>
+          <p id="end-copy"></p>
+          <button id="restart-button" class="button primary">Tentar novamente <span>↻</span></button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <section class="panel mission-panel">
+        <div class="panel-heading"><span class="panel-icon">✳</span><p class="panel-label">OBJETIVO ATUAL</p><span class="priority">PRIORIDADE ALTA</span></div>
+        <h2 id="objective">Encontre a chave</h2>
+        <p id="objective-detail">Procure nas salas próximas. Não faça barulho sem necessidade.</p>
+        <div class="progress-track"><div id="progress" class="progress-fill"></div></div>
+        <div class="stat-grid">
+          <div><span class="stat-label">VIDA</span><strong id="health-number">100 <small>/ 100</small></strong></div>
+          <div><span class="stat-label">TEMPO</span><strong id="timer">00:00</strong></div>
+        </div>
+        <div class="meter-label"><span>INTEGRIDADE</span><span id="health-label">100%</span></div>
+        <div class="meter"><div id="health-bar" class="meter-fill health-fill"></div></div>
+        <div class="meter-label"><span>FÔLEGO</span><span id="stamina-label">100%</span></div>
+        <div class="meter"><div id="stamina-bar" class="meter-fill stamina-fill"></div></div>
+        <div class="meter-label"><span>BATERIA DA LANTERNA</span><span id="battery-label">100%</span></div>
+        <div class="meter"><div id="battery-bar" class="meter-fill battery-fill"></div></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading"><span class="panel-icon">▤</span><p class="panel-label">EVIDÊNCIAS</p></div>
+        <div class="inventory-row"><span class="item-icon">⚿</span><div><strong>Chave da portaria</strong><small id="key-state">Não localizada</small></div><span id="key-check" class="check">○</span></div>
+        <div class="inventory-row"><span class="item-icon">▧</span><div><strong>Gravação danificada</strong><small id="tape-state">Não encontrada</small></div><span id="tape-check" class="check">○</span></div>
+      </section>
+
+      <section class="panel lore-panel">
+        <div class="panel-heading"><span class="panel-icon">◉</span><p class="panel-label">NOTA DE CAMPO</p></div>
+        <p id="lore-note">“Se ouvir alguém chamar pelo seu nome, não responda.”</p>
+        <small>TRANSCRIÇÃO PARCIAL · ORIGEM DESCONHECIDA</small>
+      </section>
+
+      <section class="panel controls-panel">
+        <div class="panel-heading"><span class="panel-icon">⌘</span><p class="panel-label">CONTROLES</p></div>
+        <div class="control"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><small>Movimentar</small></div>
+        <div class="control"><span><kbd>SHIFT</kbd></span><small>Correr · faz barulho</small></div>
+        <div class="control"><span><kbd>CTRL</kbd></span><small>Agachar · reduz ruído</small></div>
+        <div class="control"><span><kbd>E</kbd></span><small>Interagir / coletar</small></div>
+        <div class="control"><span><kbd>F</kbd></span><small>Lanterna</small></div>
+        <div class="control"><span><kbd>ESC</kbd></span><small>Pausar</small></div>
+        <button id="pause-button" class="button secondary" disabled>Pausar jogo <span>Ⅱ</span></button>
+      </section>
+      <p class="sidebar-foot">PROTÓTIPO INDIE · THREE.JS · BUILD 0.2</p>
+    </aside>
+  </section>
+  <footer><span>PROJETO ESCOLAR · A LENDA DO GRITO</span><span>HORROR DE SOBREVIVÊNCIA <i>—</i> NÃO CONFIE NO SILÊNCIO</span></footer>
+</main>
+<script type="module" src="js/game.js"></script>
+</body>
+</html>
